@@ -1,20 +1,19 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
 
 Resources:
-
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
       Auth:
         DefaultAuthorizer: MyLambdaTokenAuthorizer
-        Authorizers: 
+        Authorizers:
           MyLambdaTokenAuthorizer:
             FunctionArn: !GetAtt MyAuthFunction.Arn
-    
+
   HelloFunction:
-    Type: 'AWS::Serverless::Function'
+    Type: "AWS::Serverless::Function"
     Properties:
       Handler: handler.hello
       Runtime: nodejs10.x
@@ -26,14 +25,28 @@ Resources:
             RestApiId: !Ref MyApi
             Path: /hello
             Method: GET
-  
+
   MyAuthFunction:
-    Type: 'AWS::Serverless::Function'
+    Type: "AWS::Serverless::Function"
     Properties:
       CodeUri: ./authorizer
       Handler: handler.authorizer
       Runtime: nodejs10.x
-  
+
+  myDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "clientid"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "clientid"
+          KeyType: "HASH"
+      TableName: "Client"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
 Outputs:
   Region:
     Description: "Region"
@@ -45,4 +58,4 @@ Outputs:
 
   ApiUrl:
     Description: "API endpoint URL for Prod environment"
-    Value: !Sub 'https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/'
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"

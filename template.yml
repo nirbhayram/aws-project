@@ -46,6 +46,21 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
+
+  myDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "userid"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "userid"
+          KeyType: "HASH"
+      TableName: "User"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:

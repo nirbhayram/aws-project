@@ -33,7 +33,7 @@ Resources:
       Handler: handler.authorizer
       Runtime: nodejs10.x
 
-  myDynamoDBTable:
+  myDynamoDBTableClient:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
@@ -47,7 +47,7 @@ Resources:
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
 
-  myDynamoDBTable:
+  myDynamoDBTableUser:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
@@ -107,7 +107,7 @@ Outputs:
     Value: !Ref MyApi
 
   ApiUrl:
-    Description: "API endpoint URL for Prod environment"
+    Description: "API endpoint URL for dev environment"
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
 
   UserPoolId:

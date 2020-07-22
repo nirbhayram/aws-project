@@ -1,16 +1,28 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
+# Resources:
+#   MyApi:
+#     Type: AWS::Serverless::Api
+#     Properties:
+#       StageName: dev
+#       Auth:
+#         DefaultAuthorizer: MyLambdaTokenAuthorizer
+#         Authorizers:
+#           MyLambdaTokenAuthorizer:
+#             FunctionArn: !GetAtt MyAuthFunction.Arn
+
 Resources:
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
       Auth:
-        DefaultAuthorizer: MyLambdaTokenAuthorizer
-        Authorizers:
-          MyLambdaTokenAuthorizer:
-            FunctionArn: !GetAtt MyAuthFunction.Arn
+        DefaultAuthorizer: MyCognitoUserPoolAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: False
+        Authorizers: 
+          MyCognitoUserPoolAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
 
   HelloFunction:
     Type: "AWS::Serverless::Function"

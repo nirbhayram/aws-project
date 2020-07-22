@@ -16,13 +16,14 @@ Resources:
   MyApi:
     Type: AWS::Serverless::Api
     Properties:
+      Name: GetClToken
       StageName: dev
       Auth:
         DefaultAuthorizer: MyCognitoUserPoolAuthorizer
         AddDefaultAuthorizerToCorsPreflight: False
         Authorizers: 
           MyCognitoUserPoolAuthorizer:
-            UserPoolArn: !GetAtt CognitoUserPool.Arn
+            UserPoolArn: !GetAtt CognitoMachincePool.Arn
 
   HelloFunction:
     Type: "AWS::Serverless::Function"
@@ -35,7 +36,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref MyApi
-            Path: /hello
+            Path: /getcltoken
             Method: GET
 
   MyAuthFunction:
@@ -76,38 +77,52 @@ Resources:
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      # Generate a name based on the stage
       UserPoolName: sample-bank-user-pool
-      # Set email as an alias
-      UsernameAttributes:
-        - email
-      AutoVerifiedAttributes:
-        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+        UnusedAccountValidityDays: 1
 
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      # Generate an app client name based on the stage
       ClientName: sample-bank-user-pool-client
       UserPoolId:
         Ref: CognitoUserPool
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
-
-  CognitoIdentityPool:
-    Type: AWS::Cognito::IdentityPool
+  
+  CognitoMachincePool:
+    Type: AWS::Cognito::UserPool
     Properties:
-      # Generate a name based on the stage
-      IdentityPoolName: sample-bank-IdentityPool
-      # Don't allow unathenticated users
-      AllowUnauthenticatedIdentities: false
-      # Link to our User Pool
-      CognitoIdentityProviders:
-        - ClientId:
-            Ref: CognitoUserPoolClient
-          ProviderName:
-            Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
+      UserPoolName: sample-bank-machine-pool
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+        UnusedAccountValidityDays: 1
+
+  CognitoMachinePoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: sample-bank-machine-pool-client
+      UserPoolId:
+        Ref: CognitoMachincePool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+
+  # CognitoIdentityPool:
+  #   Type: AWS::Cognito::IdentityPool
+  #   Properties:
+  #     # Generate a name based on the stage
+  #     IdentityPoolName: sample-bank-IdentityPool
+  #     # Don't allow unathenticated users
+  #     AllowUnauthenticatedIdentities: false
+  #     # Link to our User Pool
+  #     CognitoIdentityProviders:
+  #       - ClientId:
+  #           Ref: CognitoUserPoolClient
+  #         ProviderName:
+  #           Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
 
 Outputs:
   Region:
@@ -129,7 +144,15 @@ Outputs:
   UserPoolClientId:
     Value:
       Ref: CognitoUserPoolClient
-  
-  IdentityPoolId:
+
+  MachinePoolId:
     Value:
-      Ref: CognitoIdentityPool
+      Ref: CognitoMachincePool
+
+  MachinePoolClientId:
+    Value:
+      Ref: CognitoMachinePoolClient
+  
+  # IdentityPoolId:
+  #   Value:
+  #     Ref: CognitoIdentityPool

@@ -28,6 +28,7 @@ Resources:
   HelloFunction:
     Type: "AWS::Serverless::Function"
     Properties:
+      FunctionName: GenerateCLToken
       Handler: handler.hello
       Runtime: nodejs10.x
       CodeUri: ./hello

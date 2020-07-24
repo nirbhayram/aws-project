@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
 # Resources:
-#   MyApi:
+#   APIGenerateClToken:
 #     Type: AWS::Serverless::Api
 #     Properties:
 #       StageName: dev
@@ -13,7 +13,7 @@ Transform: "AWS::Serverless-2016-10-31"
 #             FunctionArn: !GetAtt MyAuthFunction.Arn
 
 Resources:
-  MyApi:
+  APIGenerateClToken:
     Type: AWS::Serverless::Api
     Properties:
       Name: GetClToken
@@ -25,13 +25,13 @@ Resources:
           MyCognitoUserPoolAuthorizer:
             UserPoolArn: !GetAtt CognitoMachincePool.Arn
 
-  HelloFunction:
+  FunctionGenerateCLToken:
     Type: "AWS::Serverless::Function"
     Properties:
       FunctionName: GenerateCLToken
       Handler: handler.hello
       Runtime: nodejs10.x
-      CodeUri: ./hello
+      CodeUri: ./generateClToken
       Policies:
         - AmazonDynamoDBFullAccess
         - AWSLambdaBasicExecutionRole
@@ -39,13 +39,14 @@ Resources:
         HelloAPI:
           Type: Api
           Properties:
-            RestApiId: !Ref MyApi
+            RestApiId: !Ref APIGenerateClToken
             Path: /getcltoken
             Method: GET
 
   MyAuthFunction:
     Type: "AWS::Serverless::Function"
     Properties:
+      FunctionName: FunctionAuthorizer
       CodeUri: ./authorizer
       Handler: handler.authorizer
       Runtime: nodejs10.x
@@ -133,13 +134,13 @@ Outputs:
     Description: "Region"
     Value: !Ref AWS::Region
 
-  ApiId:
+  APIGenerateClToken:
     Description: "API ID"
-    Value: !Ref MyApi
+    Value: !Ref APIGenerateClToken
 
-  ApiUrl:
+  GenerateClTokenUrl:
     Description: "API endpoint URL for dev environment"
-    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+    Value: !Sub "https://${APIGenerateClToken}.execute-api.${AWS::Region}.amazonaws.com/dev/"
 
   UserPoolId:
     Value:

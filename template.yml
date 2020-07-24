@@ -13,17 +13,47 @@ Transform: "AWS::Serverless-2016-10-31"
 #             FunctionArn: !GetAtt MyAuthFunction.Arn
 
 Resources:
-  APIGenerateClToken:
+  APIVerifyClToken:
     Type: AWS::Serverless::Api
     Properties:
-      Name: GetClToken
+      Name: CheckClToken
       StageName: dev
       Auth:
         DefaultAuthorizer: MyCognitoUserPoolAuthorizer
         AddDefaultAuthorizerToCorsPreflight: False
         Authorizers: 
           MyCognitoUserPoolAuthorizer:
-            UserPoolArn: !GetAtt CognitoMachincePool.Arn
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+
+  FunctionVerifyCLToken:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: VerifyCLToken
+      Handler: handler.hello
+      Runtime: nodejs10.x
+      CodeUri: ./verifyClToken
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaBasicExecutionRole
+      Events:
+        HelloAPI:
+          Type: Api
+          Properties:
+            RestApiId: !Ref APIVerifyClToken
+            Path: /verifycltoken
+            Method: POST
+
+  APIGenerateClToken:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: GetClToken
+      StageName: dev
+      Auth:
+        DefaultAuthorizer: MyCognitoMachinePoolAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: False
+        Authorizers: 
+          MyCognitoMachinePoolAuthorizer:
+            UserPoolArn: !GetAtt CognitoMachinePool.Arn
 
   FunctionGenerateCLToken:
     Type: "AWS::Serverless::Function"
@@ -97,7 +127,7 @@ Resources:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
   
-  CognitoMachincePool:
+  CognitoMachinePool:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: sample-bank-machine-pool
@@ -110,7 +140,7 @@ Resources:
     Properties:
       ClientName: sample-bank-machine-pool-client
       UserPoolId:
-        Ref: CognitoMachincePool
+        Ref: CognitoMachinePool
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
@@ -142,6 +172,14 @@ Outputs:
     Description: "API endpoint URL for dev environment"
     Value: !Sub "https://${APIGenerateClToken}.execute-api.${AWS::Region}.amazonaws.com/dev/"
 
+  APIVerifyClToken:
+    Description: "API ID"
+    Value: !Ref APIVerifyClToken
+
+  VerifyClTokenUrl:
+    Description: "API endpoint URL for dev environment"
+    Value: !Sub "https://${APIVerifyClToken}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+
   UserPoolId:
     Value:
       Ref: CognitoUserPool
@@ -152,7 +190,7 @@ Outputs:
 
   MachinePoolId:
     Value:
-      Ref: CognitoMachincePool
+      Ref: CognitoMachinePool
 
   MachinePoolClientId:
     Value:

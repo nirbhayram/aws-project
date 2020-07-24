@@ -13,7 +13,7 @@ USER_SECRET=$3
     exit 1
 }
 {
-    aws dynamodb put-item --table-name "Client" --item '{"clientid": {"S": "'$USER_ID'"}}' --return-consumed-capacity TOTAL
+    aws dynamodb put-item --table-name "User" --item '{"userid": {"S": "'$USER_ID'"},"balance": {"S": "1000"}}' --return-consumed-capacity TOTAL
 } || {
     exit 1
 }

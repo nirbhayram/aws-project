@@ -23,7 +23,7 @@ exports.hello = async (event) => {
 		if (fectExpiry && Date.now() < fectExpiry) {
 			return {
 				statusCode: 200,
-				body: JSON.stringify({ "id": fetchId }),
+				body: JSON.stringify({ "token": fetchId, "client": machineId }),
 				headers: {}
 			}
 		}
@@ -46,7 +46,7 @@ exports.hello = async (event) => {
 		console.log(data);
 		return {
 			statusCode: 200,
-			body: JSON.stringify({ "id": id }),
+			body: JSON.stringify({ "token": id, "client": machineId }),
 			headers: {}
 		}
 	} catch (error) {

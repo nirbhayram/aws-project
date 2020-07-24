@@ -1,23 +1,35 @@
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 exports.hello = async (event) => {
+
+	let EXPIRY_TIME = 5 //in minutes
 	let data = {}
 	try {
 		var machineId = event.requestContext.authorizer.claims['cognito:username']
 		console.log(machineId + "************")
-		// var dynamodb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 		var documentClient = new AWS.DynamoDB.DocumentClient();
-		// var params = {
-		// 	TableName: "Client",
-		// 	Key: {
-		// 		clientid: machineId
-		// 	}
-		// };
-		// data = await documentClient.get(params).promise();
-		// console.log(data);
+		var params = {
+			TableName: "Client",
+			Key: {
+				clientid: machineId
+			}
+		};
+		data = await documentClient.get(params).promise();
+		console.log(data);
+		data = data["Item"];
+
+		var fectExpiry = data["expiry"];
+		var fetchId = data["active_token"];
+		if (fectExpiry && Date.now() < fectExpiry) {
+			return {
+				statusCode: 200,
+				body: JSON.stringify({ "id": fetchId }),
+				headers: {}
+			}
+		}
 
 		var id = uuidv4()
-		var expiry = new Date().getMilliseconds() + 5 * 60 * 1000
+		var expiry = Date.now() + (EXPIRY_TIME * 60 * 1000)
 		var params = {
 			TableName: "Client",
 			Key: {

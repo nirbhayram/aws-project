@@ -32,6 +32,9 @@ Resources:
       Handler: handler.hello
       Runtime: nodejs10.x
       CodeUri: ./hello
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaBasicExecutionRole
       Events:
         HelloAPI:
           Type: Api

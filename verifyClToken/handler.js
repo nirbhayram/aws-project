@@ -29,7 +29,12 @@ exports.hello = async (event) => {
 				return sendRespone(400, { message: clearClTokenStatus }, {})
 			}
 		} else {
-			return sendRespone(400, { message: transactionStatus }, {})
+			let clearClTokenStatus = await clearClToken(inputClient);
+			if (clearClTokenStatus === 'true') {
+				return sendRespone(400, { message: transactionStatus }, {})
+			} else {
+				return sendRespone(400, { message: clearClTokenStatus, error: clearClTokenStatus }, {})
+			}
 		}
 	} else {
 		return sendRespone(400, { message: checkToken }, {})
@@ -135,7 +140,7 @@ const checkClToken = async (clToken, client) => {
 			if (fectExpiry && fetchId && Date.now() < fectExpiry && fetchId === clToken) {
 				return 'true'
 			}
-			return 'token is expired or invalid'
+			return 'CL token is expired or invalid'
 		} else {
 			return 'Invalid client'
 		}

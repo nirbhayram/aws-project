@@ -27,3 +27,4 @@ The first command will build the source of your application. The second command 
 
 You can find your API Gateway Endpoint URL in the output values displayed after deployment.
 
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/f766714d87bf1249a444#?env%5BVoyager%5D=W3sia2V5IjoiQ2xUb2tlblJlc3BvbnNlIiwidmFsdWUiOiIiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IkdldCBjbCB0b2tlbiBob3N0IiwidmFsdWUiOiIiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IlZlcmlmeSBjbCB0b2tlbiBob3N0IiwidmFsdWUiOiIiLCJlbmFibGVkIjp0cnVlfV0=)

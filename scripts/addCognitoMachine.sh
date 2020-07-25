@@ -1,6 +1,28 @@
-MACHINE_POOL_ID=$1
-MACHINE_ID=$2
-MACHINE_SECRET=$3
+echo "Enter machine pool id : "
+read MACHINE_POOL_ID
+if [ -z "${MACHINE_POOL_ID}" ] 
+then 
+    echo "Value can't be null"
+    exit 1
+fi
+
+echo ""
+echo "Enter machine id : "
+read MACHINE_ID
+if [ -z "${MACHINE_ID}" ] 
+then 
+    echo "Value can't be null"
+    exit 1
+fi
+
+echo ""
+echo "Enter machine secret : "
+read MACHINE_SECRET
+if [ -z "${MACHINE_SECRET}" ] 
+then 
+    echo "Value can't be null"
+    exit 1
+fi
 
 {
     aws cognito-idp admin-create-user --user-pool-id ${MACHINE_POOL_ID} --username ${MACHINE_ID} --message-action SUPPRESS --temporary-password ${MACHINE_SECRET}

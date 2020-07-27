@@ -1,3 +1,4 @@
 packaged.yaml
 .aws-sam/
 */node_modules/
+.aws/
